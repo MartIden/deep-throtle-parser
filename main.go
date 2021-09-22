@@ -7,40 +7,64 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 )
 
 func main() {
 
-	_, err := command.ProcessArgs(os.Args)
+	args, err := command.ProcessArgs(os.Args)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		os.Exit(1)
 	}
 
-	baseLink := "https://wpnew.ru/blog"
-	resp, _ := getPage(baseLink)
-	getInnerLinks(resp)
+	var linksForParsing [][]string
+	linksForParsing = append(linksForParsing, []string{args.Url})
+
+	for _, links := range linksForParsing {
+		for _, link := range links {
+			resp, err := getPage(link)
+			if err != nil {
+				log.Println(err.Error())
+				os.Exit(1)
+			}
+			links, err := getInnerLinks(resp, args.Url)
+			if err != nil {
+				log.Println(err.Error())
+				os.Exit(1)
+			}
+			for _, item := range links {
+				fmt.Println(item)
+			}
+		}
+
+	}
 }
 
-func getInnerLinks(resp *http.Response) {
+func getInnerLinks(resp *http.Response, baseLink string) ([]string, error) {
+
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	var results []string
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		title := s.Text()
-		fmt.Printf("Review %d: %s\n", i, title)
 
+		href, _ := s.Attr("href")
+		isMatch, _ := regexp.MatchString(baseLink, href)
+		if isMatch {
+			results = append(results, href)
+		}
 	})
+	defer resp.Body.Close()
+	return results, nil
 }
 
 func getPage(uri string) (*http.Response, error) {
 	client := http.Client{}
 	resp, err := client.Get(uri)
 	if err != nil {
-		fmt.Println(err)
 		return resp, err
 	}
-	defer resp.Body.Close()
 	return resp, nil
 }
