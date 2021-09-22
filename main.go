@@ -7,6 +7,7 @@ import (
 	"github.com/MartIden/deep-throtle-parser/command"
 	"github.com/MartIden/deep-throtle-parser/parser"
 	"github.com/MartIden/deep-throtle-parser/request"
+	"github.com/PuerkitoBio/goquery"
 )
 
 func main() {
@@ -22,16 +23,24 @@ func main() {
 
 	for _, links := range linksForParsing {
 		var currentLinks []string
-		
+
 		for _, link := range links {
 			resp, err := request.GetPageByUri(link)
 
-			template := resp.Body
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-			links, err := parser.GetInnerLinks(template, args.Url)
+			template := resp.Body
+			doc, err := goquery.NewDocumentFromReader(template)
+			if err != nil {
+				log.Println(err.Error())
+				os.Exit(1)
+			}
+			c:= make(chan []string)
+			go parser.GetInnerLinks(doc, args.Url,c)
+			links:= <-c
+
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
