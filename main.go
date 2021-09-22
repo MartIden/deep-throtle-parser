@@ -21,24 +21,27 @@ func main() {
 	var linksForParsing [][]string
 	linksForParsing = append(linksForParsing, []string{args.Url})
 
-	for _, links := range linksForParsing {
-		for _, link := range links {
+	for i := 0; i < int(args.Deep); i++ {
+		var currentLinks []string
+		for _, link := range linksForParsing[i] {
 			resp, err := getPage(link)
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-			links, err := getInnerLinks(resp, args.Url)
+			pageLinks, err := getInnerLinks(resp, args.Url)
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-			for _, item := range links {
-				fmt.Println(item)
+			for _, currentLink := range pageLinks {
+				fmt.Println(currentLink)
+				currentLinks = append(currentLinks, currentLink)
 			}
 		}
-
+		linksForParsing = append(linksForParsing, currentLinks)
 	}
+
 }
 
 func getInnerLinks(resp *http.Response, baseLink string) ([]string, error) {
