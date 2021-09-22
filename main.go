@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/MartIden/deep-throtle-parser/command"
 	"github.com/PuerkitoBio/goquery"
 	"log"
@@ -35,11 +34,18 @@ func main() {
 				os.Exit(1)
 			}
 			for _, currentLink := range pageLinks {
-				fmt.Println(currentLink)
 				currentLinks = append(currentLinks, currentLink)
 			}
 		}
 		linksForParsing = append(linksForParsing, currentLinks)
+	}
+
+	var listOfLinks []string
+
+	for _, resultLinks := range linksForParsing {
+		for _, link := range resultLinks {
+			listOfLinks = append(listOfLinks, link)
+		}
 	}
 
 }
