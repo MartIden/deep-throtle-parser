@@ -48,6 +48,7 @@ func main() {
 			for _, currentLink := range links {
 				currentLinks = append(currentLinks, currentLink)
 			}
+			defer template.Close()
 		}
 		linksForParsing = append(linksForParsing, currentLinks)
 	}
