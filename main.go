@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/MartIden/deep-throtle-parser/controllers/command"
+	"github.com/MartIden/deep-throtle-parser/controllers/parser"
+	"github.com/MartIden/deep-throtle-parser/controllers/request"
+	"github.com/PuerkitoBio/goquery"
 	"log"
 	"os"
-
-	"github.com/MartIden/deep-throtle-parser/command"
-	"github.com/MartIden/deep-throtle-parser/parser"
-	"github.com/MartIden/deep-throtle-parser/request"
-	"github.com/PuerkitoBio/goquery"
 )
 
 func main() {
@@ -21,43 +21,27 @@ func main() {
 	var linksForParsing [][]string
 	linksForParsing = append(linksForParsing, []string{args.Url})
 
-	for _, links := range linksForParsing {
+	for i := 0; i < int(args.Deep); i++ {
 		var currentLinks []string
-
-		for _, link := range links {
+		for _, link := range linksForParsing[i] {
 			resp, err := request.GetPageByUri(link)
-
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-			template := resp.Body
-			doc, err := goquery.NewDocumentFromReader(template)
+			doc, err := goquery.NewDocumentFromReader(resp.Body)
+			pageLinks := parser.GetInnerLinks(doc, args.Url)
+			fmt.Println(pageLinks)
 			if err != nil {
 				log.Println(err.Error())
 				os.Exit(1)
 			}
-			c:= make(chan []string)
-			go parser.GetInnerLinks(doc, args.Url,c)
-			links:= <-c
-
-			if err != nil {
-				log.Println(err.Error())
-				os.Exit(1)
-			}
-			for _, currentLink := range links {
+			for _, currentLink := range pageLinks {
+				fmt.Println(currentLink)
 				currentLinks = append(currentLinks, currentLink)
 			}
-			defer template.Close()
 		}
 		linksForParsing = append(linksForParsing, currentLinks)
 	}
 
-	var listOfLinks []string
-
-	for _, resultLinks := range linksForParsing {
-		for _, link := range resultLinks {
-			listOfLinks = append(listOfLinks, link)
-		}
-	}
 }

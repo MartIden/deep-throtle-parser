@@ -1,12 +1,11 @@
 package parser
 
 import (
-	"regexp"
 	"github.com/PuerkitoBio/goquery"
+	"regexp"
 )
 
-
-func GetInnerLinks(template *goquery.Document, baseLink string,c chan []string) {
+func GetInnerLinks(template *goquery.Document, baseLink string) []string {
 
 	var results []string
 	template.Find("a").Each(func(i int, s *goquery.Selection) {
@@ -16,5 +15,5 @@ func GetInnerLinks(template *goquery.Document, baseLink string,c chan []string) 
 			results = append(results, href)
 		}
 	})
-	c <- results
+	return results
 }
