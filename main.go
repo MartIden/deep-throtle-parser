@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/MartIden/deep-throtle-parser/controllers/command"
+	"github.com/MartIden/deep-throtle-parser/controllers/parser"
+	"github.com/MartIden/deep-throtle-parser/controllers/request"
 	"log"
 	"os"
-
-	"github.com/MartIden/deep-throtle-parser/command"
-	"github.com/MartIden/deep-throtle-parser/parser"
-	"github.com/MartIden/deep-throtle-parser/request"
 )
 
 func main() {

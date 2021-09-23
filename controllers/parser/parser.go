@@ -1,14 +1,15 @@
 package parser
 
 import (
+	"github.com/PuerkitoBio/goquery"
 	"io"
 	"regexp"
-	"github.com/PuerkitoBio/goquery"
 )
 
+type Link string
 
 func GetInnerLinks(template io.ReadCloser, baseLink string) ([]string, error) {
-	
+
 	doc, err := goquery.NewDocumentFromReader(template)
 	var results []string
 	if err != nil {
