@@ -32,6 +32,8 @@ jobs:
         
     - name: Run build
       run: |
+
+        rm -rf ./build
         mkdir -p build && go build -o ./build/dp-parser
       
     - name: Push build
@@ -41,6 +43,7 @@ jobs:
         git config --global user.name "Thug [bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        diff=$(git ls-files --modified)
-        if [ $#diff != 0  ]; then git ls-files --modified | xargs git add && git commit -m "build package" && git push; else echo $diff; fi
+        git add -A
+        git commit -m "build package"
+        git push
        
