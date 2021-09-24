@@ -42,5 +42,5 @@ jobs:
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
         diff=$(git ls-files --modified)
-        if [ $#diff != 0  ]; then git ls-files --modified | xargs git add && git commit -m "build package" && git push ; fi
+        if [ $#diff != 0  ]; then git ls-files --modified | xargs git add && git commit -m "build package" && git push; else echo $diff; fi
        
