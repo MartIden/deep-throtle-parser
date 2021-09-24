@@ -38,9 +38,9 @@ jobs:
       run: |
         echo "Build dp-parser..."
 
-        git config --global user.name "github-actions[bot]"
+        git config --global user.name "Thug [bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        git add -A
-        git commit -m "build package"
-        git push
+        diff=$(git ls-files --modified)
+        if [ $#diff != 0  ]; then git ls-files --modified | xargs git add && git commit -m "build package" && git push ; fi
+       
