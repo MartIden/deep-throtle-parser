@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/MartIden/deep-throtle-parser/controllers/command"
-	"github.com/MartIden/deep-throtle-parser/controllers/parser"
-	"github.com/MartIden/deep-throtle-parser/controllers/request"
-	"github.com/PuerkitoBio/goquery"
 	"log"
 	"os"
+
+	"github.com/MartIden/deep-throtle-parser/pkg/command"
+	"github.com/MartIden/deep-throtle-parser/pkg/parser"
+	"github.com/MartIden/deep-throtle-parser/pkg/request"
+	"github.com/PuerkitoBio/goquery"
 )
 
 func main() {
@@ -37,11 +38,11 @@ func main() {
 				os.Exit(1)
 			}
 			for _, currentLink := range pageLinks {
-				fmt.Println(currentLink)
 				currentLinks = append(currentLinks, currentLink)
 			}
 		}
 		linksForParsing = append(linksForParsing, currentLinks)
 	}
 
+	fmt.Println(linksForParsing)
 }
